@@ -58,10 +58,10 @@ def _pin_modified(core_xml: bytes) -> bytes:
 def save_reproducible(wb: Workbook, path: Path) -> None:
     """Saves the workbook byte-reproducibly on every platform.
 
-    openpyxl stamps the current time in the core properties, the zip entries carry the
-    current time and the platform, and deflate streams differ between zlib builds; so the
-    file is rewritten with pinned timestamps, stored (uncompressed) entries and a fixed
-    central directory.
+    openpyxl stamps the current time in the core properties, writes cell newlines as CRLF
+    on Windows, the zip entries carry the current time and the platform, and deflate
+    streams differ between zlib builds; so the file is rewritten with pinned timestamps,
+    LF newlines, stored (uncompressed) entries and a fixed central directory.
     """
     wb.properties.created = STAMP
     wb.save(path)
@@ -71,6 +71,7 @@ def save_reproducible(wb: Workbook, path: Path) -> None:
         for name, content in entries:
             if name == "docProps/core.xml":
                 content = _pin_modified(content)
+            content = content.replace(b"\r\n", b"\n")  # cell newlines: CRLF on Windows
             info = zipfile.ZipInfo(name, date_time=STAMP.timetuple()[:6])
             info.compress_type = zipfile.ZIP_STORED
             info.create_system = 3
