@@ -1,0 +1,15 @@
+[brand]
+terms = ["STG", "Schmeisser", "Terra Gomes", "stglaw", "RenavePro", "Renave", "Lagoa", "HJR", "ELAW", "AUTOJUR", "FUBOG", "Valquenis"]
+
+[domains]
+internal = ["stglaw.com.br", "stgadvogados.com.br"]
+
+[hosts]
+suffixes = ["sharepoint.com", "onmicrosoft.com"]
+
+[allow]
+# lock file and the demo's run output (git-ignored)
+paths = ["uv.lock", ".demo/*", ".demo/**/*"]
+# Fixture case numbers are dated 2099 (a year no real case can carry) and have invalid
+# check digits; they appear in the fixtures, the tests, the README and the demo output.
+patterns = ['\d{7}-\d{2}\.2099\.\d\.\d{2}\.\d{4}']
