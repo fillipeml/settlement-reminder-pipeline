@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="utf-8" /></head>
+<body style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#17181c;line-height:1.6;">
+  <p>Prezados, bom dia!</p>
+
+  <p>Gostaríamos de lembrá-los do pagamento da {{ ordinal }}{% if is_last %} e última{% endif %} parcela do acordo.</p>
+
+  <p>A data limite para pagamento da parcela é dia {{ due_date }} ({{ weekday }}).</p>
+
+  {% if postponed %}
+  <p>Observação: o vencimento original recai em {{ original_due }} ({{ original_weekday }}), razão pela qual o pagamento fica prorrogado para o primeiro dia útil subsequente, nos termos do acordo.</p>
+  {% endif %}
+
+  <p>Valores:<br />
+  R$ {{ amount }} ({{ amount_in_words }}) referente aos valores devidos {{ addressed_honorific }} {{ beneficiary }}.</p>
+
+  <p>O pagamento deverá ser realizado mediante {{ payment_method }} na seguinte conta:<br />
+  {{ payment_details_html }}</p>
+
+  <p>Por favor, nos envie o comprovante assim que o pagamento for efetuado.</p>
+
+  <p>Esclarecemos que, {{ late_clause }}.</p>
+
+  <p>Permanecemos à disposição.</p>
+</body>
+</html>

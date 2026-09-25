@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="utf-8" /></head>
+<body style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#17181c;line-height:1.6;">
+  <p>Prezados, bom dia!</p>
+
+  <p>Não identificamos, até o momento, o pagamento da {{ ordinal }}{% if is_last %} e última{% endif %} parcela do acordo, cuja data limite era o dia {{ due_date }} ({{ weekday }}).</p>
+
+  <p>Valores:<br />
+  R$ {{ amount }} ({{ amount_in_words }}) referente aos valores devidos {{ addressed_honorific }} {{ beneficiary }}.</p>
+
+  <p>O pagamento deverá ser realizado mediante {{ payment_method }} na seguinte conta:<br />
+  {{ payment_details_html }}</p>
+
+  <p><b>Caso o pagamento já tenha sido efetuado, por gentileza nos encaminhe o comprovante respondendo a este e-mail</b>, para a devida baixa em nossos controles.</p>
+
+  <p>Esclarecemos que, {{ late_clause }}.</p>
+
+  <p>Permanecemos à disposição.</p>
+</body>
+</html>
