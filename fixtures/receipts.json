@@ -1,0 +1,13 @@
+{
+  "_note": "Recorded readings of the demo receipts, keyed by attachment name. The demo reader answers from here; no model is called.",
+  "receipt-3000.pdf": {
+    "is_receipt": true,
+    "scheduled": false,
+    "amount": "3000.00",
+    "paid_on": "2026-09-16",
+    "beneficiary": "FULANO DE TAL",
+    "institution": "Banco Exemplo",
+    "transaction_id": "E00000000202609161540DEMO00001",
+    "notes": []
+  }
+}

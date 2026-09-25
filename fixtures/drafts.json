@@ -1,0 +1,40 @@
+{
+  "_note": "Recorded extraction of the demo's legacy draft, keyed by file name. Every value is fictional.",
+  "draft-agreement.pdf": {
+    "case_number": "0001111-27.2099.8.99.0001",
+    "claimant": "Fulano Comprador da Silva",
+    "payer": "Construtora Exemplo LTDA",
+    "late_clause": "em caso de atraso no pagamento da parcela, haverá incidência de cláusula penal de 20% (vinte por cento) sobre as parcelas inadimplidas",
+    "obligations": [
+      {
+        "description": "main credit",
+        "beneficiary_name": "Fulano Comprador da Silva",
+        "honorific": "Sr.",
+        "payment_method": "transferência bancária",
+        "payment_details": "Titular: Fulano Comprador da Silva;\nCPF: 000.000.000-00;\nBanco: 000 - Banco Exemplo;\nAgência: 0001;\nConta: 12345-6.",
+        "installments": [
+          {"number": 1, "due": "2026-10-14", "amount": "3200.00"},
+          {"number": 2, "due": "2026-11-14", "amount": "3200.00"},
+          {"number": 3, "due": "2026-12-14", "amount": "3200.00"},
+          {"number": 4, "due": "2027-01-14", "amount": "3200.00"},
+          {"number": 5, "due": "2027-02-14", "amount": "3200.00"},
+          {"number": 6, "due": "2027-03-14", "amount": "3200.00"}
+        ]
+      },
+      {
+        "description": "final installment to the attorney",
+        "beneficiary_name": "Beltrano Procurador Souza",
+        "honorific": "Dr.",
+        "payment_method": "transferência bancária",
+        "payment_details": "Titular: Beltrano Procurador Souza;\nCPF: 000.000.000-00;\nBanco: 000 - Banco Exemplo;\nAgência: 0002;\nConta: 98765-4.",
+        "installments": [
+          {"number": 7, "due": "2027-04-14", "amount": "4800.00"}
+        ]
+      }
+    ],
+    "total_amount": "24000.00",
+    "no_collection": ["R$ 8.058,24 paid at once through a court order (appeal deposit)"],
+    "confidence": "high",
+    "doubts": []
+  }
+}

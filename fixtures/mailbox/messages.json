@@ -1,0 +1,79 @@
+{
+  "_note": "Every sender, client and case number is fictional: the domains are reserved (.example) and the case numbers are dated 2099 with invalid check digits. The reference date of the demo is 2026-09-17.",
+  "messages": [
+    {
+      "id": "n1-notice-a",
+      "subject": "ACORDO PACTUADO - 0001234-74.2099.5.99.0001 - FULANO DE TAL X EXEMPLO ENGENHARIA LTDA",
+      "sender": "lawyer@lawfirm.example",
+      "received_at": "2026-09-14T10:12:00Z",
+      "addressed_to_bot": true,
+      "body_file": "notice-a.html"
+    },
+    {
+      "id": "n2-receipt-a",
+      "subject": "RE: ACORDO PACTUADO - 0001234-74.2099.5.99.0001 - FULANO DE TAL X EXEMPLO ENGENHARIA LTDA",
+      "sender": "finance@exemplo-engenharia.example",
+      "received_at": "2026-09-16T15:40:00Z",
+      "addressed_to_bot": true,
+      "body": "<p>Boa tarde, segue o comprovante da primeira parcela.</p>",
+      "attachments": [
+        {"name": "receipt-3000.pdf", "file": "attachments/receipt-3000.pdf"},
+        {"name": "signature.vcf"}
+      ]
+    },
+    {
+      "id": "n3-notice-d",
+      "subject": "ACORDO PACTUADO - 0000165-98.2099.5.99.0003 - BELTRANO DE TAL X COMERCIO MODELO S.A.",
+      "sender": "lawyer@lawfirm.example",
+      "received_at": "2026-09-15T09:05:00Z",
+      "addressed_to_bot": true,
+      "body_file": "notice-d.html"
+    },
+    {
+      "id": "n4-reply-no-attachment",
+      "subject": "RE: ACORDO PACTUADO - 0001234-74.2099.5.99.0001 - FULANO DE TAL X EXEMPLO ENGENHARIA LTDA",
+      "sender": "board@exemplo-engenharia.example",
+      "received_at": "2026-09-16T16:02:00Z",
+      "addressed_to_bot": true,
+      "body": "<p>Recebido, obrigado. Faremos o pagamento na data.</p>"
+    },
+    {
+      "id": "n5-test-notice",
+      "subject": "[TEST] ACORDO PACTUADO - 0001234-74.2099.5.99.0001 - FULANO DE TAL X EXEMPLO ENGENHARIA LTDA",
+      "sender": "lawyer@lawfirm.example",
+      "received_at": "2026-09-13T18:30:00Z",
+      "addressed_to_bot": true,
+      "body_file": "notice-a.html"
+    },
+    {
+      "id": "n6-legacy-draft",
+      "subject": "FW: Termo de acordo - Construtora Exemplo",
+      "sender": "lawyer@lawfirm.example",
+      "received_at": "2026-09-15T11:20:00Z",
+      "addressed_to_bot": true,
+      "body": "<p>Segue a minuta assinada para cadastro.</p>",
+      "attachments": [
+        {"name": "draft-agreement.pdf", "file": "attachments/draft-agreement.pdf"}
+      ]
+    },
+    {
+      "id": "n7-invalid-notice",
+      "subject": "ACORDO PACTUADO - 0002222-43.2099.8.99.0002 - PARTE X CLIENTE",
+      "sender": "lawyer@lawfirm.example",
+      "received_at": "2026-09-16T08:45:00Z",
+      "addressed_to_bot": true,
+      "body_file": "notice-invalid.html"
+    },
+    {
+      "id": "n8-group-traffic",
+      "subject": "Contract for the team's review",
+      "sender": "partner@lawfirm.example",
+      "received_at": "2026-09-16T09:00:00Z",
+      "addressed_to_bot": false,
+      "body": "<p>Group traffic that only copies the mailbox: not a draft.</p>",
+      "attachments": [
+        {"name": "contract.pdf"}
+      ]
+    }
+  ]
+}
