@@ -12,6 +12,7 @@ logs/
 .demo/
 *.sqlite
 *.sqlite3
+sanitize.toml
 sanitize-report.*
 
 # AI tooling local state
