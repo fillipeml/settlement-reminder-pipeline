@@ -8,6 +8,7 @@ Portuguese.
 from __future__ import annotations
 
 import logging
+import re
 import unicodedata
 from collections.abc import Iterable
 from datetime import date, datetime
@@ -150,6 +151,15 @@ def _parse_date(value: object) -> date | None:
     return None
 
 
+#: An amount written the Brazilian way: full stops grouping thousands, a comma before
+#: the cents. Mirrors the pattern in ingest/notice.py.
+_AMOUNT_BR_RE = re.compile(
+    r"^\d{1,3}(?:\.\d{3})*,\d{1,2}$"  # 1.234,56 and 1234,56
+    r"|^\d+,\d{1,2}$"
+    r"|^\d{1,3}(?:\.\d{3})+$"  # 1.000 and 1.234.567, no cents
+)
+
+
 def _parse_decimal(value: object) -> Decimal | None:
     if value is None or value == "":
         return None
@@ -161,7 +171,12 @@ def _parse_decimal(value: object) -> Decimal | None:
     text = str(value).strip()
     for token in ("R$", " ", "\xa0"):
         text = text.replace(token, "")
-    text = text.replace(".", "").replace(",", ".")
+    # Only rewrite what is actually written the Brazilian way. Applying the rule
+    # unconditionally turned a text-typed 1234.56 into 123456 - a hundredfold error in an
+    # amount demanded from a client, and silent. ingest/notice.py already guards this;
+    # the spreadsheet path did not.
+    if _AMOUNT_BR_RE.match(text):
+        text = text.replace(".", "").replace(",", ".")
     try:
         return Decimal(text)
     except InvalidOperation:
@@ -242,34 +257,36 @@ class ExcelSource(DataSource):
             raise FileNotFoundError(f"Spreadsheet not found: {self.path}")
 
         wb = load_workbook(self.path, read_only=True, data_only=True)
-        ws = wb.active
-        rows = ws.iter_rows(values_only=True)
         try:
-            header = next(rows)
-        except StopIteration:
-            logger.warning("Spreadsheet %s is empty.", self.path)
-            return []
-
-        by_name = map_columns([h for h in header if h is not None])
-        index = {h: i for i, h in enumerate(header)}
-        col = {field: index[name] for field, name in by_name.items()}
-        agreements: list[Agreement] = []
-        for line_no, row in enumerate(rows, start=2):
-            if row is None or all(c is None or c == "" for c in row):
-                continue
-
-            def get(field: str, _row=row):
-                idx = col.get(field)
-                return _row[idx] if idx is not None and idx < len(_row) else None
-
+            ws = wb.active
+            rows = ws.iter_rows(values_only=True)
             try:
-                agreement = row_to_agreement(get)
-            except (ValidationError, ValueError) as exc:
-                logger.warning("Row %d ignored (%s): %s", line_no, self.path, exc)
-                continue
-            if agreement.active:
-                agreements.append(agreement)
+                header = next(rows)
+            except StopIteration:
+                logger.warning("Spreadsheet %s is empty.", self.path)
+                return []
 
-        wb.close()
-        logger.info("Excel: %d active agreement(s) read from %s", len(agreements), self.path)
-        return agreements
+            by_name = map_columns([h for h in header if h is not None])
+            index = {h: i for i, h in enumerate(header)}
+            col = {field: index[name] for field, name in by_name.items()}
+            agreements: list[Agreement] = []
+            for line_no, row in enumerate(rows, start=2):
+                if row is None or all(c is None or c == "" for c in row):
+                    continue
+
+                def get(field: str, _row=row):
+                    idx = col.get(field)
+                    return _row[idx] if idx is not None and idx < len(_row) else None
+
+                try:
+                    agreement = row_to_agreement(get)
+                except (ValidationError, ValueError) as exc:
+                    logger.warning("Row %d ignored (%s): %s", line_no, self.path, exc)
+                    continue
+                if agreement.active:
+                    agreements.append(agreement)
+
+            logger.info("Excel: %d active agreement(s) read from %s", len(agreements), self.path)
+            return agreements
+        finally:
+            wb.close()

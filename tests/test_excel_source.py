@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 from openpyxl import Workbook
 
-from settlement_reminders.sources.excel import ExcelSource
+from settlement_reminders.sources.excel import ExcelSource, _parse_decimal
 from tests.factories import CASE_B
 
 COLUMNS = [
@@ -126,3 +126,22 @@ def test_missing_required_column(tmp_path):
     wb.save(p)
     with pytest.raises(ValueError):
         list(ExcelSource(str(p)).fetch_agreements())
+
+
+class TestAmountParsing:
+    """A spreadsheet cell typed as text, which is how amounts usually arrive."""
+
+    def test_a_dot_decimal_is_not_multiplied_by_a_hundred(self) -> None:
+        # The bug: the Brazilian rule was applied unconditionally, so "1234.56" became
+        # 123456 — a hundredfold error in the amount demanded from a client, and silent.
+        assert _parse_decimal("1234.56") == Decimal("1234.56")
+        assert _parse_decimal("0.5") == Decimal("0.5")
+
+    def test_brazilian_notation_still_parses(self) -> None:
+        assert _parse_decimal("R$ 1.234,56") == Decimal("1234.56")
+        assert _parse_decimal("1234,56") == Decimal("1234.56")
+
+    def test_grouped_thousands_without_cents_survive(self) -> None:
+        # The case the guard must not break: no comma, but unmistakably grouped.
+        assert _parse_decimal("1.000") == Decimal("1000")
+        assert _parse_decimal("1.234.567") == Decimal("1234567")
