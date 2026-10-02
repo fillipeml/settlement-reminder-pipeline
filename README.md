@@ -7,7 +7,7 @@ A daily pipeline for a litigation team whose clients pay court settlements in in
 **Status:** in production for the original team since mid-2026 · **Runs offline:** yes, the demo needs no key, no tenant and no network
 
 ```
-$ uv run settlement-reminders --demo
+$ DRY_RUN=false uv run settlement-reminders --demo
 WARNING settlement_reminders: DEMO_MODE: fixture mailbox, recorded readings, e-mails written to .demo/outbox
 INFO  ingest.pipeline: Notice processed: case=0001234-74.2099.5.99.0001 operation=REGISTER status=active issues=0
 INFO  demo: [OUTBOX] ACORDO PACTUADO - 0001234-74.2099.5.99.0001 - FULANO DE TAL X EXEMPLO ENGENHARIA LTDA -> to=['finance@exemplo-engenharia.example', ...]
@@ -28,7 +28,7 @@ Collections: sent 1 | simulated 0 | on hold 0 | escalated 0
   check:     reply from board@exemplo-engenharia.example about case 0001234-74.2099.5.99.0001 without an attached receipt
   check:     invalid notice 'ACORDO PACTUADO - 0002222-43.2099.8.99.0002 - PARTE X CLIENTE': required key missing: COUNTERPARTY
 
-$ uv run settlement-reminders --demo          # the same day again: nothing goes out
+$ DRY_RUN=false uv run settlement-reminders --demo    # the same day again: nothing goes out
 Reminders: selected 2 | sent 0 | simulated 0 | already sent 1 | already settled 1
 Collections: sent 0 | simulated 0 | on hold 0 | escalated 0
 ```
@@ -78,7 +78,7 @@ The daily run (`run.py`) sweeps the mailbox, then walks every installment of eve
 
 - **Generated:** the original Portuguese version was written with an AI coding assistant over a few months of daily use, in shadow mode first; this English version was produced by translating and restructuring it with the same assistant, with the demo adapters, the fixture mailbox and the notice skill's English documentation introduced in the process.
 - **Rewritten by me:** the calendar and the cycle (business days with the state's holidays, the reminder day, the catch-up window, the schedule of attempts and the one-per-day ramp) and the rules of the e-mails a Brazilian client expects (feminine ordinals, amounts in words, the honorific with the right preposition, the late clause transcribed and never computed), each with tests before the code.
-- **Validated:** 227 tests run offline; the readers are replaced by recorded readings, the mailbox by eight fixture messages that cover every route of the sweep, and the whole demo is asserted end to end up to the escalation day.
+- **Validated:** 230 tests run offline; the readers are replaced by recorded readings, the mailbox by eight fixture messages that cover every route of the sweep, and the whole demo is asserted end to end up to the escalation day.
 - **Rejected designs:** letting the model say which installment a receipt settles (it picked the next open one even when the amount differed); replaying every missed collection on the first run after downtime; marking messages as processed in the mailbox itself (the store carries that state, and the mailbox is never modified); an approval step for the controllership (it wanted to see, not to sign).
 - **Commits:** made with an AI coding assistant; attribution trailers are omitted and AI usage is documented here.
 
@@ -112,7 +112,7 @@ In production the pipeline handles personal data: names, bank details and receip
 
 ## Tests & CI
 
-`uv run pytest` runs 227 tests offline: the business-day calendar over national and state holidays, the reminder and collection schedules with the catch-up window, idempotency across the dry-run and live modes, the notice parser's tolerances and errors, the mailbox sweep over the eight fixture messages, replies and holds, the store, the templates rendered and checked for the Portuguese wording, the threaded sender with the permission fallback, and the demo end to end, including the walk to the escalation. CI runs lint, the tests, a check that the generated fixtures match their script, the demo twice on the same day (the second run must send nothing) and along the six days to the escalation, the template previews and a gitleaks scan.
+`uv run pytest` runs 230 tests offline: the business-day calendar over national and state holidays, the reminder and collection schedules with the catch-up window, idempotency across the dry-run and live modes, the notice parser's tolerances and errors, the mailbox sweep over the eight fixture messages, replies and holds, the store, the templates rendered and checked for the Portuguese wording, the threaded sender with the permission fallback, and the demo end to end, including the walk to the escalation. CI runs lint, the tests, a check that the generated fixtures match their script, the demo twice on the same day (the second run must send nothing) and along the six days to the escalation, the template previews and a gitleaks scan.
 
 ## Stack
 
@@ -125,7 +125,11 @@ git clone https://github.com/fillipeml/settlement-reminder-pipeline
 cd settlement-reminder-pipeline
 uv sync
 uv run settlement-reminders --demo                    # the fixture day, 2026-09-17
-uv run settlement-reminders --demo --date 2026-10-01  # the escalation day
+
+# The escalation is reached, not jumped to: each run leaves the state the next one reads.
+for day in 2026-09-21 2026-09-23 2026-09-25 2026-09-29 2026-09-30 2026-10-01; do
+  uv run settlement-reminders --demo --date $day
+done
 ls .demo/outbox                                       # every e-mail, as the recipient sees it
 uv run settlement-agreements list --demo
 uv run settlement-audit --demo
