@@ -15,7 +15,20 @@ The pipeline reads one mailbox and sends from it through Microsoft Graph with ap
 
 ## Restrict the app to one mailbox
 
-Application permissions are tenant-wide by default. Restrict the app with an Exchange Online **Application Access Policy** so it can only touch the automation's mailbox (a mail-enabled security group containing that account):
+Application permissions are tenant-wide by default, so without this step the app can read and
+send as every mailbox in the tenant. Scope it to one.
+
+**Use RBAC for Applications, not an Application Access Policy.** Microsoft's own reference for
+`New-ApplicationAccessPolicy` now carries this notice: *"App Access Policies are replaced by Role
+Based Access Control for Applications ... Don't create new App Access Policies as these policies
+will eventually require migration to Role Based Access Control for Applications."* Take the exact
+commands from
+[Role Based Access Control for Exchange Applications](https://learn.microsoft.com/en-us/exchange/permissions-exo/application-rbac),
+which is the page that stays current — the shape is a service principal for the app, a management
+scope naming the same mail-enabled security group, and a role assignment binding the two.
+
+The older policy below still works and is what existing deployments have. It is kept here because
+migrating one is easier than recognising one, not as the recommended path:
 
 ```powershell
 Connect-ExchangeOnline
