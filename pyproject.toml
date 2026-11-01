@@ -17,7 +17,7 @@ dependencies = [
   "anthropic>=1.8",
   "tenacity>=8.3",
   "tzdata>=2024.1",
-  "python-dateutil>=2.9,<3",
+  "python-dateutil>=2.9,<4",
   "num2words>=0.5.13",
   "holidays>=0.50",
 ]
